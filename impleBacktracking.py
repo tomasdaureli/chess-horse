@@ -1,61 +1,45 @@
-from animation import *
+import time
 
-# All possible moves for the knight
-horse_moves = [(2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1)]
+def inicializar_tablero(tamaño):
+    """Inicializar un tablero de ajedrez vacío con -1 para indicar casillas no visitadas."""
+    return [[-1 for _ in range(tamaño)] for _ in range(tamaño)]
 
-def is_valid_move(x, y, board, N):
-    """Check if the move is within bounds and not yet visited."""
-    return 0 <= x < N and 0 <= y < N and board[x][y] == -1
+def es_movimiento_valido(x, y, tablero):
+    """Verificar si el movimiento es válido: dentro de los límites y no visitado aún."""
+    tamaño = len(tablero)
+    return 0 <= x < tamaño and 0 <= y < tamaño and tablero[x][y] == -1
 
-def count_next_moves(x, y, board, N):
-    """Counts possible moves from the current position."""
-    count = 0
-    for dx, dy in horse_moves:
-        if is_valid_move(x + dx, y + dy, board, N):
-            count += 1
-    return count
-
-def solve_knights_tour(x, y, move_count, board, N, win):
-    """Backtracking with Warnsdorff's heuristic to solve the knight's tour problem."""
-    # If tour is complete
-    if move_count == N * N:
+def resolver_recorrido_del_caballo(tablero, x, y, contador_de_movimientos, total_movimientos):
+    """Intentar resolver el problema del recorrido del caballo utilizando backtracking."""
+    tamaño = len(tablero)
+    if contador_de_movimientos == tamaño * tamaño:
         return True
-
-    # Order moves by minimum onward moves
-    possible_moves = []
-    for dx, dy in horse_moves:
-        next_x, next_y = x + dx, y + dy
-        if is_valid_move(next_x, next_y, board, N):
-            possible_moves.append(
-                (count_next_moves(next_x, next_y, board, N), next_x, next_y)
-            )
-    possible_moves.sort()  # Sort moves by the fewest onward moves
-
-    # Attempt each move in order
-    for _, next_x, next_y in possible_moves:
-        board[next_x][next_y] = move_count
-        displayFrame(win, board, (next_x, next_y))
-        time.sleep(0.2)  # Pause to see the move, commented for the speed
-        #print(f"Move {move_count}: Knight to ({next_x}, {next_y})")
-
-        if solve_knights_tour(next_x, next_y, move_count + 1, board, N, win):
-            return True
-
-        # Backtrack
-        board[next_x][next_y] = -1
-
+    
+    movimientos_del_caballo = [
+        (2, 1), (1, 2), (-1, 2), (-2, 1),
+        (-2, -1), (-1, -2), (1, -2), (2, -1)
+    ]
+    
+    for dx, dy in movimientos_del_caballo:
+        total_movimientos[0] += 1
+        nuevo_x, nuevo_y = x + dx, y + dy
+        if es_movimiento_valido(nuevo_x, nuevo_y, tablero):
+            tablero[nuevo_x][nuevo_y] = contador_de_movimientos
+            if resolver_recorrido_del_caballo(tablero, nuevo_x, nuevo_y, contador_de_movimientos + 1, total_movimientos):
+                return True
+            tablero[nuevo_x][nuevo_y] = -1  # Retroceder
     return False
 
-def start_knights_tourBT(N, win):
-    # Initialize board
-    board = [[-1 for _ in range(N)] for _ in range(N)]
-    # Start in center or (0, 0) if size < 5 for better chances
-    start_x, start_y = (N // 2, N // 2) if N >= 5 else (0, 0)
-    board[start_x][start_y] = 0
-
-    if solve_knights_tour(start_x, start_y, 1, board, N, win):
-        print("Completed Knight's Tour:")
-        displayFrame(win, board, (start_x, start_y), "Solution found")
+def ResolverConBacktracking(size, start_x, start_y):
+    t1 = time.process_time()
+    board = inicializar_tablero(size)
+    board[start_x][start_y] = 0  # Initialize the starting position with the first move
+    contador_de_mov = [0]
+    message = ""
+    if resolver_recorrido_del_caballo(board, start_x, start_y, 1,contador_de_mov):
+        message = f"Solución encontrada en\n {contador_de_mov[0]}\n iteraciones.\n"
     else:
-        print("No solution found for the knight's tour.")
-        displayFrame(win, board, (start_x, start_y), "No solution found")
+        message = f"No se encontró solución en\n {contador_de_mov[0]}\n iteraciones.\n"
+    t2 = time.process_time()
+    message = message + f"\nTiempo de ejecución:\n {t2-t1} \nsegundos."
+    return (board,message)
