@@ -1,5 +1,22 @@
 from impleBacktracking import ResolverConBacktracking 
+from impleBranchBound import ResolverConPoda
 from graphics import *
+
+"""
+UADE - Universidad Argentina de la Empresa
+Materia: DISEÑO Y ANÁLISIS DE ALGORITMOS
+Profesor: Bianchimano, Omar Nestor Cristian
+Año: 2024
+
+Trabajo Práctico Obligatorio (TPO): Recorrido del Caballo de Ajedrez
+Grupo 1
+
+Integrantes:
+    - D'Aureli, Tomas (1122820)
+    - Fuertes, Noelia Miranda (1117648)
+    - Gilabert, Germán Victor (1118036)
+    - Toloza, Gonzalo (1153053)
+"""
 
 ## Menu ###
 try:
@@ -25,10 +42,10 @@ try:
 
     if algorithm == 1:
         result = ResolverConBacktracking(N, Irow, Icol)
-        displayFrame(win, result[0], result[1])       
     else:
-        #todo implementar start_knights_tourBB
-        start_knights_tourBB(N, [Irow, Icol], win)
+        result = ResolverConPoda(N, Irow, Icol)
+    
+    displayFrame(win, result[0], result[1])
 
     win.getMouse()
     win.close()
