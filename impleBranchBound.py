@@ -60,7 +60,7 @@ def ResolverConPoda(size, start_x, start_y):
     if resolver_recorrido_del_caballo(board, start_x, start_y, 1, contador_de_mov):
         message = f"{configMsg}Solución encontrada en\n {contador_de_mov[0]} iteraciones.\n"
     else:
-        message = f"No se encontró solución en\n {contador_de_mov[0]} iteraciones.\n"
+        message = f"{configMsg}\nNo se encontró solución en\n {contador_de_mov[0]} iteraciones.\n"
     t2 = time.process_time()
     elapsed_time = t2 - t1
     message = message + f"\nTiempo de ejecución:\n {'menor a 0.00001' if elapsed_time < 0.00001 else f'{elapsed_time:0,.5f}'} segundos."
